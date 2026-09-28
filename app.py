@@ -1,117 +1,55 @@
+"""既存のURL・テンプレート・フォーム名を維持したFlaskエントリーポイント。"""
 from flask import Flask, render_template, request
-
-
-from kantei_main import kantei_uma
-from kantei_main import kantei_kisyu
-
-
-
-#配列をグローバル変数と指定
-#uma
-#kisyu
-
-global uma
-global kisyu
-global kusei_nen
-global kusei_tuki
-global kusei_hi
-
-
-
-
-uma = []
-kisyu = []
-
-kusei_nen = ""
-kusei_tuki = ""
-kusei_hi = ""
-
-data_kusei = []
-
-
+from kantei_main import InputError, kantei_kisyu, kantei_uma, validate_kusei
 
 app = Flask(__name__)
+
+
+def _stars_from_form():
+    return [request.form.get(key) for key in ("kusei_nen", "kusei_tuki", "kusei_hi")]
+
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-@app.route("/kakusu_select", methods=['GET', 'POST'])
 
-#index.htmlからの遷移
+@app.route("/kakusu_select", methods=["GET", "POST"])
 def kakusu_select():
-    if request.method == 'POST':
-        # POSTデータを取得
-        user_data = request.form
-        kusei_nen = request.form.get('kusei_nen')
-        kusei_tuki = request.form.get('kusei_tuki') 
-        kusei_hi = request.form.get('kusei_hi')
-        seletc_form_id = request.form.get('select_form_id')
-     
-        data_kusei.append(kusei_nen)
-        data_kusei.append(kusei_tuki)
-        data_kusei.append(kusei_hi)
-
-     
-
-        if seletc_form_id == "kisyu":
-            return render_template("kisyu_form.html",data_kusei = data_kusei)
-        elif seletc_form_id == "uma":
-            return render_template("uma_form.html",data_kusei = data_kusei)
-        else:
-            return render_template("no-kakusu.html")
-    else:
+    if request.method != "POST":
         return render_template("index.html")
+    try:
+        # 共有配列へのappendを廃止。毎回のPOST値だけを次の画面へ渡す。
+        data_kusei = list(validate_kusei(*_stars_from_form()))
+    except InputError as exc:
+        return render_template("errer.html", kotae=["errer", str(exc), exc.value])
+    selected = request.form.get("select_form_id")
+    if selected == "kisyu":
+        return render_template("kisyu_form.html", data_kusei=data_kusei)
+    if selected == "uma":
+        return render_template("uma_form.html", data_kusei=data_kusei)
+    return render_template("no-kakusu.html")
 
 
-@app.route("/kisyu_form", methods=['GET', 'POST'])
+@app.route("/kisyu_form", methods=["GET", "POST"])
 def kisyu_form():
-
-    if request.method == 'POST':
-        # POSTデータを取得
-        #uma = request.form.getlist('uma')     
-        kusei_nen = request.form.get('kusei_nen')
-        kusei_tuki = request.form.get('kusei_tuki')
-        kusei_hi = request.form.get('kusei_hi')
-
-        
-        kisyu = []
-        for i in range(1, 19):
-            kisyu.append(request.form['kisyu' + str(i)])
-
-
-        kotae = kantei_kisyu(kisyu,kusei_nen,kusei_tuki,kusei_hi)
-        
-        if kotae[0] == "errer":
-            return render_template("errer.html",kotae = kotae)
-        elif kotae[0] != "errer":
-            return render_template("kisyu_kantei.html",kotae = kotae)
-    else:
+    if request.method != "POST":
         return render_template("no-kakusu.html")
+    names = [request.form.get(f"kisyu{i}", "") for i in range(1, 19)]
+    kotae = kantei_kisyu(names, *_stars_from_form())
+    template = "errer.html" if kotae[0] == "errer" else "kisyu_kantei.html"
+    return render_template(template, kotae=kotae)
 
 
-@app.route("/uma_form", methods=['GET', 'POST'])
+@app.route("/uma_form", methods=["GET", "POST"])
 def uma_form():
-    if request.method == 'POST':
-        # POSTデータを取得
-        kusei_nen = request.form.get('kusei_nen')
-        kusei_tuki = request.form.get('kusei_tuki')
-        kusei_hi = request.form.get('kusei_hi')
+    if request.method != "POST":
+        return render_template("no-kakusu.html")
+    names = [request.form.get(f"uma{i}", "") for i in range(1, 19)]
+    kotae = kantei_uma(names, *_stars_from_form())
+    template = "errer.html" if kotae[0] == "errer" else "uma_kantei.html"
+    return render_template(template, kotae=kotae)
 
-        
-        uma = []
-        for i in range(1, 19):
-            uma.append(request.form['uma' + str(i)])   
-   
-        kotae = kantei_uma(uma,kusei_nen,kusei_tuki,kusei_hi)
-  
-    
-        if kotae[0] == "errer":
-            return render_template("errer.html",kotae = kotae)
-        elif kotae[0] != "errer":
-            return render_template("uma_kantei.html",kotae = kotae)
-    else:
-        return render_template("no-kakusu.html")       
 
 @app.route("/about")
 def about():

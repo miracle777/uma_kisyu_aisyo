@@ -1,0 +1,34 @@
+{
+  "base_repository": "miracle777/uma_kisyu_aisyo",
+  "base_commit": "f885f7926dd5929d8109e334f3f531b01d0810ea",
+  "state": "local_fix_candidate_not_deployed",
+  "python_tests_passed": 46,
+  "python_integration_tests_skipped": 5,
+  "javascript_tests_passed": 3,
+  "changed_files": [
+    {
+      "path": "app.py",
+      "sha256": "b9498a3f7dfc8c9aabcf2478e4836a91e7223960e9b94964a5d3fd65bba68535"
+    },
+    {
+      "path": "kantei_main.py",
+      "sha256": "aa3dd4e556a108cb1caf332de5311408924ce6a93c88049f701b93f1ef150011"
+    },
+    {
+      "path": "static/csv/kakusu-utf8.csv",
+      "sha256": "654827ee435cdb212031fdc370856c7d098ad233f7994b7b52c84f3fe043c6d5"
+    },
+    {
+      "path": "static/js/hantei.js",
+      "sha256": "fdc099263b887ecb4823e3d12a4fbdf17bf9257d06ef1546666d4f6d04743336"
+    },
+    {
+      "path": "templates/kisyu_kantei.html",
+      "sha256": "bfbdb868f584e33d427ca10c5785c688d2c95791e039a8ac25600462577411dc"
+    },
+    {
+      "path": "templates/uma_kantei.html",
+      "sha256": "ff602a67903977a5b3199af9456d2cefbf9dba5d5116d789f5846a5847df3e39"
+    }
+  ]
+}

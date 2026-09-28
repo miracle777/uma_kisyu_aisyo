@@ -41,6 +41,10 @@
 </table>
 <div class="select_form col-sm">
   <form action="{{ url_for('kakusu_select') }}" method="POST">
+    <!-- 共有変数を使わず、この結果の年・月・日を次の入力画面へ渡す。 -->
+    <input type="hidden" name="kusei_nen" value="{{ kotae[0][3] }}">
+    <input type="hidden" name="kusei_tuki" value="{{ kotae[0][4] }}">
+    <input type="hidden" name="kusei_hi" value="{{ kotae[0][5] }}">
     <h2>続けて入力しますか？</h2>
     <div class="select_form_p">
       <label for="r1">
