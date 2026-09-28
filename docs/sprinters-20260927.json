@@ -1,0 +1,460 @@
+{
+  "race": "2026年9月27日 第60回スプリンターズステークス",
+  "analysis_type": "結果判明後の全頭画数検算。事前予測・的中実績ではない。",
+  "source_commit": "f885f7926dd5929d8109e334f3f531b01d0810ea",
+  "stroke_rule_version": "kakusu-20260928-v1",
+  "stars": {
+    "year": 1,
+    "month": 1,
+    "day": 8
+  },
+  "legend": {
+    "1": "既存アプリの最上位相性",
+    "2": "既存アプリの良い相性",
+    "3": "相性条件に該当しない（馬の能力評価ではない）"
+  },
+  "sources": {
+    "race_result": "https://www.jra.go.jp/datafile/seiseki/g1/sprint/result/sprint2026.html",
+    "all_finish_positions": "https://www.tv-tokyo.co.jp/sports/smp/articles/2026/09/042439.html",
+    "day_calendar": "https://yakumoin.info/daily/direction/date/20260927",
+    "month_calendar": "https://yakumoin.info/kyusei/direction_month/id/1/1",
+    "year_calendar": "https://bestcalendar.jp/tools/kyusei",
+    "source_repository": "https://github.com/miracle777/uma_kisyu_aisyo",
+    "same_strokes": "https://kanji.sljfaq.org/k/u9BAB.html",
+    "lemaire_spelling": "https://keiba.rakuten.co.jp/jockey/detail/JOCKEYID/60339",
+    "race_card": "ユーザーの保存済み accessD (4).pdf：2026/09/27・15:05時点、全16頭。"
+  },
+  "rules": [
+    "小書きカナは通常サイズと同じ画数",
+    "濁点2画・半濁点1画・長音1画・中点1画",
+    "漢字は字体を変えず登録値を使う",
+    "騎手の日評価には日を使用",
+    "未登録文字を0画で通さない",
+    "相性配列list1/list2は変更しない"
+  ],
+  "caveats": [
+    "旧画数は旧集計ロジックの独立再実装であり、公開サイトの出力を取得したものではない。",
+    "本番漢字辞書の全件監査ではなく、今回使用する文字のテスト用部分辞書で検算した。",
+    "画数補正だけで的中や回収率の向上を立証できない。",
+    "公開サイトの現在の配備コードとGitHubの一致は未確認。"
+  ],
+  "horse_count_changed": 9,
+  "rows": [
+    {
+      "gate": 1,
+      "horse_number": 1,
+      "finish": 5,
+      "horse_name": "レッドモンレーヴ",
+      "horse_strokes_legacy_emulation": 15,
+      "horse_number_legacy_emulation": 6,
+      "horse_strokes_fixed": 20,
+      "horse_kyusei_number_fixed": 2,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_input": "酒井学",
+      "jockey_entry_spelling": "酒井学",
+      "jockey_strokes_fixed": 22,
+      "jockey_kyusei_number_fixed": 4,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    },
+    {
+      "gate": 1,
+      "horse_number": 2,
+      "finish": 11,
+      "horse_name": "アイサンサン",
+      "horse_strokes_legacy_emulation": 14,
+      "horse_number_legacy_emulation": 5,
+      "horse_strokes_fixed": 14,
+      "horse_kyusei_number_fixed": 5,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        2
+      ],
+      "jockey_input": "幸英明",
+      "jockey_entry_spelling": "幸英明",
+      "jockey_strokes_fixed": 24,
+      "jockey_kyusei_number_fixed": 6,
+      "jockey_compatibility_year_month_day": [
+        1,
+        1,
+        2
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 1,
+      "note": ""
+    },
+    {
+      "gate": 2,
+      "horse_number": 3,
+      "finish": 10,
+      "horse_name": "ママコチャ",
+      "horse_strokes_legacy_emulation": 9,
+      "horse_number_legacy_emulation": 9,
+      "horse_strokes_fixed": 11,
+      "horse_kyusei_number_fixed": 2,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_input": "武豊",
+      "jockey_entry_spelling": "武豊",
+      "jockey_strokes_fixed": 21,
+      "jockey_kyusei_number_fixed": 3,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    },
+    {
+      "gate": 2,
+      "horse_number": 4,
+      "finish": 8,
+      "horse_name": "ジューンブレア",
+      "horse_strokes_legacy_emulation": 11,
+      "horse_number_legacy_emulation": 2,
+      "horse_strokes_fixed": 16,
+      "horse_kyusei_number_fixed": 7,
+      "horse_compatibility_year_month_day": [
+        1,
+        1,
+        2
+      ],
+      "jockey_input": "坂井瑠星",
+      "jockey_entry_spelling": "坂井瑠星",
+      "jockey_strokes_fixed": 34,
+      "jockey_kyusei_number_fixed": 7,
+      "jockey_compatibility_year_month_day": [
+        1,
+        1,
+        2
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 1,
+      "note": ""
+    },
+    {
+      "gate": 3,
+      "horse_number": 5,
+      "finish": 3,
+      "horse_name": "サウンドモリアーナ",
+      "horse_strokes_legacy_emulation": 22,
+      "horse_number_legacy_emulation": 4,
+      "horse_strokes_fixed": 22,
+      "horse_kyusei_number_fixed": 4,
+      "horse_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_input": "吉田隼人",
+      "jockey_entry_spelling": "吉田隼人",
+      "jockey_strokes_fixed": 23,
+      "jockey_kyusei_number_fixed": 5,
+      "jockey_compatibility_year_month_day": [
+        3,
+        3,
+        2
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 3,
+      "note": ""
+    },
+    {
+      "gate": 3,
+      "horse_number": 6,
+      "finish": 2,
+      "horse_name": "ワールズエンド",
+      "horse_strokes_legacy_emulation": 18,
+      "horse_number_legacy_emulation": 9,
+      "horse_strokes_fixed": 18,
+      "horse_kyusei_number_fixed": 9,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_input": "津村明秀",
+      "jockey_entry_spelling": "津村明秀",
+      "jockey_strokes_fixed": 31,
+      "jockey_kyusei_number_fixed": 4,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    },
+    {
+      "gate": 4,
+      "horse_number": 7,
+      "finish": 8,
+      "horse_name": "ペアポルックス",
+      "horse_strokes_legacy_emulation": 15,
+      "horse_number_legacy_emulation": 6,
+      "horse_strokes_fixed": 18,
+      "horse_kyusei_number_fixed": 9,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_input": "岩田康誠",
+      "jockey_entry_spelling": "岩田康誠",
+      "jockey_strokes_fixed": 37,
+      "jockey_kyusei_number_fixed": 1,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    },
+    {
+      "gate": 4,
+      "horse_number": 8,
+      "finish": 7,
+      "horse_name": "エーティーマクフィ",
+      "horse_strokes_legacy_emulation": 13,
+      "horse_number_legacy_emulation": 4,
+      "horse_strokes_fixed": 17,
+      "horse_kyusei_number_fixed": 8,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        3
+      ],
+      "jockey_input": "富田暁",
+      "jockey_entry_spelling": "富田暁",
+      "jockey_strokes_fixed": 29,
+      "jockey_kyusei_number_fixed": 2,
+      "jockey_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 3,
+      "note": ""
+    },
+    {
+      "gate": 5,
+      "horse_number": 9,
+      "finish": 4,
+      "horse_name": "スターアニス",
+      "horse_strokes_legacy_emulation": 12,
+      "horse_number_legacy_emulation": 3,
+      "horse_strokes_fixed": 12,
+      "horse_kyusei_number_fixed": 3,
+      "horse_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_input": "クリストフ・ルメール",
+      "jockey_entry_spelling": "C.ルメール",
+      "jockey_strokes_fixed": 17,
+      "jockey_kyusei_number_fixed": 8,
+      "jockey_compatibility_year_month_day": [
+        3,
+        3,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 3,
+      "note": "計数時の表記をクリストフ・ルメール（中点1画）と明示。略称は自動変換しない。"
+    },
+    {
+      "gate": 5,
+      "horse_number": 10,
+      "finish": 13,
+      "horse_name": "レイピア",
+      "horse_strokes_legacy_emulation": 8,
+      "horse_number_legacy_emulation": 8,
+      "horse_strokes_fixed": 8,
+      "horse_kyusei_number_fixed": 8,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        3
+      ],
+      "jockey_input": "横山武史",
+      "jockey_entry_spelling": "横山武史",
+      "jockey_strokes_fixed": 31,
+      "jockey_kyusei_number_fixed": 4,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    },
+    {
+      "gate": 6,
+      "horse_number": 11,
+      "finish": 14,
+      "horse_name": "ルガル",
+      "horse_strokes_legacy_emulation": 8,
+      "horse_number_legacy_emulation": 8,
+      "horse_strokes_fixed": 8,
+      "horse_kyusei_number_fixed": 8,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        3
+      ],
+      "jockey_input": "鮫島克駿",
+      "jockey_entry_spelling": "鮫島克駿",
+      "jockey_strokes_fixed": 51,
+      "jockey_kyusei_number_fixed": 6,
+      "jockey_compatibility_year_month_day": [
+        1,
+        1,
+        2
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 1,
+      "note": "鮫は既存辞書にない場合17画で補完。"
+    },
+    {
+      "gate": 6,
+      "horse_number": 12,
+      "finish": 16,
+      "horse_name": "ブラックチャリス",
+      "horse_strokes_legacy_emulation": 11,
+      "horse_number_legacy_emulation": 2,
+      "horse_strokes_fixed": 19,
+      "horse_kyusei_number_fixed": 1,
+      "horse_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_input": "浜中俊",
+      "jockey_entry_spelling": "浜中俊",
+      "jockey_strokes_fixed": 23,
+      "jockey_kyusei_number_fixed": 5,
+      "jockey_compatibility_year_month_day": [
+        3,
+        3,
+        2
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 3,
+      "note": ""
+    },
+    {
+      "gate": 7,
+      "horse_number": 13,
+      "finish": 15,
+      "horse_name": "パンジャタワー",
+      "horse_strokes_legacy_emulation": 16,
+      "horse_number_legacy_emulation": 7,
+      "horse_strokes_fixed": 18,
+      "horse_kyusei_number_fixed": 9,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_input": "松山弘平",
+      "jockey_entry_spelling": "松山弘平",
+      "jockey_strokes_fixed": 21,
+      "jockey_kyusei_number_fixed": 3,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    },
+    {
+      "gate": 7,
+      "horse_number": 14,
+      "finish": 6,
+      "horse_name": "ウインカーネリアン",
+      "horse_strokes_legacy_emulation": 20,
+      "horse_number_legacy_emulation": 2,
+      "horse_strokes_fixed": 20,
+      "horse_kyusei_number_fixed": 2,
+      "horse_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_input": "三浦皇成",
+      "jockey_entry_spelling": "三浦皇成",
+      "jockey_strokes_fixed": 28,
+      "jockey_kyusei_number_fixed": 1,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    },
+    {
+      "gate": 8,
+      "horse_number": 15,
+      "finish": 12,
+      "horse_name": "フリッカージャブ",
+      "horse_strokes_legacy_emulation": 11,
+      "horse_number_legacy_emulation": 2,
+      "horse_strokes_fixed": 19,
+      "horse_kyusei_number_fixed": 1,
+      "horse_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_input": "西村淳也",
+      "jockey_entry_spelling": "西村淳也",
+      "jockey_strokes_fixed": 27,
+      "jockey_kyusei_number_fixed": 9,
+      "jockey_compatibility_year_month_day": [
+        3,
+        3,
+        1
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 3,
+      "note": ""
+    },
+    {
+      "gate": 8,
+      "horse_number": 16,
+      "finish": 1,
+      "horse_name": "ピューロマジック",
+      "horse_strokes_legacy_emulation": 16,
+      "horse_number_legacy_emulation": 7,
+      "horse_strokes_fixed": 21,
+      "horse_kyusei_number_fixed": 3,
+      "horse_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_input": "岩田望来",
+      "jockey_entry_spelling": "岩田望来",
+      "jockey_strokes_fixed": 31,
+      "jockey_kyusei_number_fixed": 4,
+      "jockey_compatibility_year_month_day": [
+        2,
+        2,
+        3
+      ],
+      "jockey_day_using_wrong_year_reference_at_fixed_count": 2,
+      "note": ""
+    }
+  ]
+}

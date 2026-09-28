@@ -1,0 +1,56 @@
+test_continue_forms_carry_three_stars (test_contracts.ContractTests.test_continue_forms_carry_three_stars) ... ok
+test_no_cgi_or_global_result_state (test_contracts.ContractTests.test_no_cgi_or_global_result_state) ... ok
+test_python310_syntax_compatibility (test_contracts.ContractTests.test_python310_syntax_compatibility) ... ok
+test_result_templates_keep_six_columns (test_contracts.ContractTests.test_result_templates_keep_six_columns) ... ok
+test_six_original_routes_preserved (test_contracts.ContractTests.test_six_original_routes_preserved) ... ok
+test_bad_input_uses_existing_error_screen (test_flask_routes.FlaskRouteTests.test_bad_input_uses_existing_error_screen) ... skipped 'Flaskと既存base.html等がある実行環境で確認する統合テスト'
+test_get_routes (test_flask_routes.FlaskRouteTests.test_get_routes) ... skipped 'Flaskと既存base.html等がある実行環境で確認する統合テスト'
+test_jockey_and_continue_to_horse (test_flask_routes.FlaskRouteTests.test_jockey_and_continue_to_horse) ... skipped 'Flaskと既存base.html等がある実行環境で確認する統合テスト'
+test_selections_do_not_keep_old_stars (test_flask_routes.FlaskRouteTests.test_selections_do_not_keep_old_stars) ... skipped 'Flaskと既存base.html等がある実行環境で確認する統合テスト'
+test_two_horse_posts (test_flask_routes.FlaskRouteTests.test_two_horse_posts) ... skipped 'Flaskと既存base.html等がある実行環境で確認する統合テスト'
+test_18_entries_preserved (test_kantei.KanteiTests.test_18_entries_preserved) ... ok
+test_19_entries_error (test_kantei.KanteiTests.test_19_entries_error) ... ok
+test_all_16_horse_counts (test_kantei.KanteiTests.test_all_16_horse_counts) ... ok
+test_all_16_jockey_counts (test_kantei.KanteiTests.test_all_16_jockey_counts) ... ok
+test_all_small_kana_equal_large_kana (test_kantei.KanteiTests.test_all_small_kana_equal_large_kana) ... ok
+test_all_three_periods_are_independent (test_kantei.KanteiTests.test_all_three_periods_are_independent) ... ok
+test_bad_dictionary_rows_rejected (test_kantei.KanteiTests.test_bad_dictionary_rows_rejected) ... ok
+test_bu_exists_and_bi_not_duplicated (test_kantei.KanteiTests.test_bu_exists_and_bi_not_duplicated) ... ok
+test_combining_voicing (test_kantei.KanteiTests.test_combining_voicing) ... ok
+test_concurrent_calls (test_kantei.KanteiTests.test_concurrent_calls) ... ok
+test_conflicting_kana_dictionary_error (test_kantei.KanteiTests.test_conflicting_kana_dictionary_error) ... ok
+test_different_working_directory (test_kantei.KanteiTests.test_different_working_directory) ... ok
+test_error_followed_by_valid_input (test_kantei.KanteiTests.test_error_followed_by_valid_input) ... ok
+test_gap_explicit_error_not_silent_truncation (test_kantei.KanteiTests.test_gap_explicit_error_not_silent_truncation) ... ok
+test_halfwidth_kana (test_kantei.KanteiTests.test_halfwidth_kana) ... ok
+test_horse_non_kana_rejected (test_kantei.KanteiTests.test_horse_non_kana_rejected) ... ok
+test_initial_abbreviation_rejected (test_kantei.KanteiTests.test_initial_abbreviation_rejected) ... ok
+test_invalid_stars_error_not_server_crash (test_kantei.KanteiTests.test_invalid_stars_error_not_server_crash) ... ok
+test_jockey_day_uses_day_not_year (test_kantei.KanteiTests.test_jockey_day_uses_day_not_year) ... ok
+test_jockey_digit_rejected (test_kantei.KanteiTests.test_jockey_digit_rejected) ... ok
+test_kanji_first_match_policy_preserved (test_kantei.KanteiTests.test_kanji_first_match_policy_preserved) ... ok
+test_kanji_variant_not_normalized (test_kantei.KanteiTests.test_kanji_variant_not_normalized) ... ok
+test_middle_dot_and_long_mark (test_kantei.KanteiTests.test_middle_dot_and_long_mark) ... ok
+test_missing_dictionary_error_is_readable (test_kantei.KanteiTests.test_missing_dictionary_error_is_readable) ... ok
+test_missing_same_character_supplement (test_kantei.KanteiTests.test_missing_same_character_supplement) ... ok
+test_mixed_kanji_and_kana (test_kantei.KanteiTests.test_mixed_kanji_and_kana) ... ok
+test_no_names_error (test_kantei.KanteiTests.test_no_names_error) ... ok
+test_original_compatibility_tables_preserved (test_kantei.KanteiTests.test_original_compatibility_tables_preserved) ... ok
+test_reduction_rejects_invalid (test_kantei.KanteiTests.test_reduction_rejects_invalid) ... ok
+test_reduction_repeated_digits (test_kantei.KanteiTests.test_reduction_repeated_digits) ... ok
+test_reinitialization_does_not_grow_arrays (test_kantei.KanteiTests.test_reinitialization_does_not_grow_arrays) ... ok
+test_repeated_horse_calls_have_no_old_results (test_kantei.KanteiTests.test_repeated_horse_calls_have_no_old_results) ... ok
+test_repeated_jockey_calls_have_no_old_results (test_kantei.KanteiTests.test_repeated_jockey_calls_have_no_old_results) ... ok
+test_return_value_mutation_does_not_leak (test_kantei.KanteiTests.test_return_value_mutation_does_not_leak) ... ok
+test_trailing_empty_slots_allowed (test_kantei.KanteiTests.test_trailing_empty_slots_allowed) ... ok
+test_unregistered_character_is_not_silently_zero (test_kantei.KanteiTests.test_unregistered_character_is_not_silently_zero) ... ok
+test_utf8_bom_and_blank_rows (test_kantei.KanteiTests.test_utf8_bom_and_blank_rows) ... ok
+test_valid_star_strings (test_kantei.KanteiTests.test_valid_star_strings) ... ok
+test_voicing_counts (test_kantei.KanteiTests.test_voicing_counts) ... ok
+test_whitespace_normalization (test_kantei.KanteiTests.test_whitespace_normalization) ... ok
+test_wrong_input_container_error (test_kantei.KanteiTests.test_wrong_input_container_error) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 0.186s
+
+OK (skipped=5)

@@ -1,601 +1,193 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""馬名・騎手名の画数鑑定。既存テンプレートの6列配列を維持する。
 
-#九星相性を調べるプログラム
-#相性の結果を出力するプログラム
-#HTMLファイルに、結果を送るプログラム
-#ウェブアプリとするために、修正。
-#呼び出し元は、app.py
-#必要なモジュールは、appy.pyでインポートしています。
-
-#配列をグローバル変数と指定
-
-
-global uma
-global kisyu
-global kusei_nen
-global kusei_tuki
-global kusei_hi
-
-#配列をグローバル指定
-global kantei_uma_nen
-global kantei_uma_tuki
-global kantei_uma_hi
-
-global kantei_kisyu_nen
-global kantei_kisyu_tuki
-global kantei_kisyu_hi
-
-#画数
-global kakusu_uma
-global kakusu_kisyu
-
-#九星判定
-global kantei_uma_kusei
-global kantei_kisyu_kusei
-
-
-#csv読み込み
-global kisyu_kanji
-global kisyu_kakusu
-global katakana
-global kakusu
-global list1
-global list2
-
-#配列宣言
-kana = []
-kakusu = []
-
-
-import cgi
-import cgitb
-import codecs
-import os
-import sys
-import webbrowser
+計数規約: 小書きカナは通常サイズと同画数、濁点は2画、半濁点は1画、
+長音・中点は各1画。漢字は既存CSVの表記を使用し、旧字体を置換しない。
+この計算は当アプリの相性規則であり、競走能力・的中確率を表すものではない。
+"""
+from pathlib import Path
 import csv
+import logging
 import re
+import unicodedata
+from collections.abc import Sequence
 
+LOGGER = logging.getLogger(__name__)
+CSV_DIR = Path(__file__).resolve().parent / "static" / "csv"
+MAX_ENTRIES = 18
 
-
-cgitb.enable()
-
-
-
-
-#馬名配列
-uma = []
-uma_l = 0
-#騎手名配列
-kisyu = []
-kisyu_l = 0
-
-#画数配列
-#馬名：騎手の順で記録
-kakusu_uma = []
-kakusu_kisyu = []
-
-#鑑定結果二次元配列
-#九星:年:月：日の相性結果で記録
-#18行の二次元配列の初期化
-kantei_uma_kusei = []
-kantei_uma_nen = []
-kantei_uma_tuki = []
-kantei_uma_hi = []
-
-
-kantei_kisyu_kusei = []
-kantei_kisyu_nen = []
-kantei_kisyu_tuki = []
-kantei_kisyu_hi = []
-
-kusei_nen = ""
-kusei_tuki = ""
-kusei_hi = ""
-
-
-
-#配列宣言
-kana = []
-kakusu = []
-
-kisyu_kanji = []
-kisyu_kakusu = []
-
-
-
-#エラー送信用
-errer_meg = []
-
-
-"""運が良い数字の組み合わせ設定"""
-
-#0は、ダミー
-#最初は、ダミーを入れておく
-#一白水星から九紫火星までの順番でセット。
-#一番運が良い相性
+# 既存の相性規則は変更しない（0は従来のダミー値）。
 list1 = [
-    [0,0,0],
-    [6,7,0],
-    [9,0,0],
-    [1,0,0],
-    [1,0,0],
-    [9,0,0],
-    [2,5,8],
-    [2,5,8],
-    [2,9,0],
-    [3,4,0]
+    [0, 0, 0], [6, 7, 0], [9, 0, 0], [1, 0, 0], [1, 0, 0],
+    [9, 0, 0], [2, 5, 8], [2, 5, 8], [2, 9, 0], [3, 4, 0],
 ]
-
-#良い相性
 list2 = [
-    [0,0,0,0],
-    [1,3,4,0],
-    [5,6,7,8],
-    [3,4,9,0],
-    [3,4,9,0],
-    [2,6,7,8],
-    [1,7,0,0],
-    [1,6,7,0],
-    [5,6,7,0],
-    [2,5,8,0]
+    [0, 0, 0, 0], [1, 3, 4, 0], [5, 6, 7, 8], [3, 4, 9, 0],
+    [3, 4, 9, 0], [2, 6, 7, 8], [1, 7, 0, 0], [1, 6, 7, 0],
+    [5, 6, 7, 0], [2, 5, 8, 0],
 ]
+# 元の漢字辞書に未登録の場合だけ補う。既存の登録値を上書きしない。
+# 鮫17画: https://kanji.sljfaq.org/k/u9BAB.html
+KANJI_ADDITIONS = {"鮫": 17}
+SMALL_KANA = dict(zip("ァィゥェォッャュョヮヵヶ", "アイウエオツヤユヨワカケ"))
+
+
+class InputError(ValueError):
+    """既存エラー画面に表示する入力エラー。"""
+
+    def __init__(self, message, value=""):
+        super().__init__(message)
+        self.value = value
+
+
+def validate_kusei(kusei_nen, kusei_tuki, kusei_hi):
+    """年・月・日の値を1〜9の整数として確認する。暦の自動算出はしない。"""
+    result = []
+    for label, value in zip(("年", "月", "日"), (kusei_nen, kusei_tuki, kusei_hi)):
+        if isinstance(value, bool) or not isinstance(value, (str, int)):
+            raise InputError(f"{label}の九星は1〜9から選択してください。")
+        text = str(value).strip()
+        if not re.fullmatch(r"[1-9]", text):
+            raise InputError(f"{label}の九星は1〜9から選択してください。", text)
+        result.append(int(text))
+    return tuple(result)
+
+
+def _load_strokes(path, *, strict_duplicates=True):
+    """UTF-8 CSVをリクエストごとに読み込み、共有の可変状態を作らない。"""
+    strokes = {}
+    with Path(path).open("r", encoding="utf-8-sig", newline="") as handle:
+        for line_no, row in enumerate(csv.reader(handle), 1):
+            if not row or all(not cell.strip() for cell in row):
+                continue
+            if [cell.strip().lower() for cell in row] == ["kanji", "kakusu"]:
+                continue
+            if len(row) != 2:
+                raise ValueError(f"画数辞書の列数が不正: {path.name}:{line_no}")
+            char, value = (cell.strip() for cell in row)
+            if len(char) != 1 or not re.fullmatch(r"[0-9]+", value) or int(value) < 1:
+                raise ValueError(f"画数辞書の値が不正: {path.name}:{line_no}")
+            number = int(value)
+            if char in strokes and strokes[char] != number:
+                if strict_duplicates:
+                    raise ValueError(f"異なる画数が重複: {char} ({path.name}:{line_no})")
+                # 既存漢字辞書については従来と同じ先頭一致を維持する。
+                LOGGER.warning("漢字辞書の重複 %s: 先頭の%d画を使用", char, strokes[char])
+            strokes.setdefault(char, number)
+    if not strokes:
+        raise ValueError(f"画数辞書が空: {path.name}")
+    return strokes
+
 
 def kantei_int():
-    #漢字カタカナ画数データ読み込み
-
-    #カタカナ画数調べる
-    #Python
-    #CVSファイル読み込み
-
-    #csvファイルを指定
-    MyPath = './static/csv/kakusu-utf8.csv'
-
-    #csvファイルを読み込み
-    with open(MyPath) as f:
-
-        reader = csv.reader(f)
-
-        #csvファイルのデータをループ
-        for row in reader:
-
-            #A列を配列へ格納
-            kana.append(str(row[0]))
-
-            #B列を配列へ格納
-            kakusu.append(str(row[1]))
-
-        #デバッグ用CVS内容確認
-        #print(kisyu_kanji)
-        #print(kisyu_kakusu)
-        # 
-
-    #漢字の画数のファイル読み込み
+    """従来の初期化名を維持。呼び出しごとに独立した辞書を返す。"""
+    kana = _load_strokes(CSV_DIR / "kakusu-utf8.csv")
+    kanji = _load_strokes(CSV_DIR / "kanji_DATA_BASE.csv", strict_duplicates=False)
+    for char, count in KANJI_ADDITIONS.items():
+        kanji.setdefault(char, count)
+    return kana, kanji
 
 
-    #CVSファイル読み込み
-
-    #csvファイルを指定
-    MyPath = './static/csv/kanji_DATA_BASE.csv'
-
-    #csvファイルを読み込み
-    with open(MyPath) as f:
-
-        reader = csv.reader(f)
-
-        #csvファイルのデータをループ
-        for row in reader:
-
-            #A列を配列へ格納
-            kisyu_kanji.append(str(row[0]))
-
-            #B列を配列へ格納
-            kisyu_kakusu.append(str(row[1]))
+def normalize_name(name):
+    """空白とカナの幅・結合濁点だけを整える。漢字の字体は保持する。"""
+    if not isinstance(name, str):
+        raise InputError("名前は文字列で入力してください。")
+    name = re.sub(r"\s+", "", name)
+    name = re.sub(r"[\uff61-\uff9f]+", lambda m: unicodedata.normalize("NFKC", m[0]), name)
+    return re.sub(r"[\u30a0-\u30ff\u3099\u309a]+", lambda m: unicodedata.normalize("NFC", m[0]), name)
 
 
+def _prepare_names(names):
+    if isinstance(names, (str, bytes)) or not isinstance(names, Sequence):
+        raise InputError("名前を配列で指定してください。")
+    if len(names) > MAX_ENTRIES:
+        raise InputError("一度に入力できる名前は18件までです。")
+    prepared = [normalize_name(name) for name in names]
+    # 末尾の未使用欄は従来どおり許可する。
+    while prepared and not prepared[-1]:
+        prepared.pop()
+    if not prepared:
+        raise InputError("名前を1件以上入力してください。")
+    for index, name in enumerate(prepared, 1):
+        if not name:
+            raise InputError("途中に空欄があります。先頭から順に入力してください。", f"{index}番目の入力欄")
+    return prepared
 
 
-
-######################################################
-###
-### 騎手鑑定
-###
-######################################################
-def kantei_kisyu(kisyu,kusei_nen,kusei_tuki,kusei_hi):
-
-    kantei_int()
-    kisyu_l = len(kisyu)
-
-    kusei_nen = int(kusei_nen)
-    kusei_tuki = int(kusei_tuki)
-    kusei_hi = int(kusei_hi)
-  
-    temp_kisyu = []
-    for i in  range(kisyu_l):
-        if kisyu[i] !="" :
-            temp_kisyu.append(kisyu[i])
+def _count_strokes(name, kind, kana, kanji):
+    if kind == "kisyu" and any(char.isdigit() for char in name):
+        raise InputError("騎手名に数字が入っています。", name)
+    if kind == "kisyu" and re.search(r"[A-Za-zＡ-Ｚａ-ｚ.]", name):
+        raise InputError("騎手名の英字・略称には対応していません。カタカナのフルネームで入力してください。", name)
+    total = 0
+    unknown = []
+    for original in name:
+        char = SMALL_KANA.get(original, original)
+        if kind == "uma":
+            # 馬名はこれまでどおりカタカナと長音に限定する。
+            count = kana.get(char) if ("ァ" <= char <= "ヶ" or char == "ー") else None
         else:
-            break
-
-    kisyu = temp_kisyu
-    kisyu_l = len(kisyu)    
-
-    for l in range(kisyu_l): #騎手名が入力されている間ループ
-        inp2_kusei = 0
-        inp_kusei = 0
-        #騎手の名前の文字数を取得
-        length = len(kisyu[l])
-
-
-        #騎手名に数字が含まれているか確認
-        if any(char.isdigit() for char in kisyu[l]):
-            #数字が入っている場合はエラー
-            errer_meg.append('errer')
-            errer_meg.append('騎手名に数字が入っています')
-            errer_meg.append(kisyu[l])
-            return errer_meg
-
-
-
-        temp_kisyu = kisyu[l]
-        status_kata = 0 #カタカナかどうかの判定用
-
-        #騎手の名前がカタカナかどうか判定
-        for i in range(length):
-            if temp_kisyu[i] in kana:
-                status_kata = 1
-                break
-
-        #名前に"ー"があるかどうか判定
-        if temp_kisyu.find('ー') != -1:
-            status_kata = 1
-
-        
-        if status_kata == 1:
-            for i in range(length):
-                for j in range(len(kana)):     #カタカナの名前の場合
-                    if  temp_kisyu[i] == kana[j]:
-                        inp_kusei = inp_kusei + int(kakusu[j])
-                        break  
-        
-        if status_kata == 0:
-            #一文字ずつ取り出して、画数を取得
-            for i in range(length):
-                for j in range(len(kisyu_kanji)):   #漢字の名前の場合
-                    if temp_kisyu[i] == kisyu_kanji[j]:
-                        inp_kusei = inp_kusei + int(kisyu_kakusu[j])
-                        break
-                        
-
-
-        #騎手名の画数の計算ができないとき
-        if inp_kusei == 0:
-            errer_meg.append("errer")
-            errer_meg.append("騎手名の画数の計算ができません")
-            errer_meg.append(kisyu[l])
-            return errer_meg
-
-
-        #inp_kusei内容表示
-        kakusu_kisyu.append(inp_kusei)
-
-        if inp_kusei > 9:
-            inp2_kusei = 0
-            for i in str(inp_kusei):
-                # 桁ごとに足していく
-                inp2_kusei += int(i)
-
-        while inp2_kusei > 9:
-            new_inp2_kusei = 0
-            for i in str(inp2_kusei):
-                # 桁ごとに足していく
-                new_inp2_kusei += int(i)
-            inp2_kusei = new_inp2_kusei
-            
-
-        
-        #九星の位置を取得
-        if inp2_kusei >0:
-            kantei_kisyu_kusei.append(inp2_kusei)
-            inp_kusei = inp2_kusei
+            # 漢字とカナの混在でも、文字ごとに辞書を選ぶ。
+            count = kana.get(char)
+            if count is None:
+                count = kanji.get(char)
+        if count is None:
+            if original not in unknown:
+                unknown.append(original)
         else:
-            kantei_kisyu_kusei.append(inp_kusei)
-
-
-
-        #print ('今日の九星との相性は')
-        #今年の九星との相性を判断して表示
-        #今年の相性が良いのかチャック用
-        kyou = 0
-    
-
-        for i in range(3):
-            if list1[kusei_nen][i] == inp_kusei:
-                #print ('一番良い相性です')
-                kantei_kisyu_nen.append(1) #一番良い相性
-                kyou = 1
-                break
-
-        if kyou == 0:    
-            for i in range(4):
-                if list2[kusei_nen][i] == inp_kusei:
-                    #print ('良い相性です')
-                    kantei_kisyu_nen.append(2) #良い相性
-                    kyou = 1
-                    break
-
-        if kyou == 0:
-            #print ('相性は悪いです')
-            kantei_kisyu_nen.append(3) #悪い相性
-
-        #print ('今月の九星との相性は')
-        #今月の九星との相性を判断して表示
-        #今月相性が良いのかチャック用
-        kyou = 0
-
-        for i in range(3):
-            if list1[kusei_tuki][i] == inp_kusei:
-                #print ('一番良い相性です')
-                kantei_kisyu_tuki.append(1) #一番良い相性
-                kyou = 1
-                break
-
-        if kyou == 0: 
-            for i in range(4):
-                if list2[kusei_tuki][i] == inp_kusei:
-                    #print ('良い相性です')
-                    kantei_kisyu_tuki.append(2) #良い相性
-                    kyou = 1
-                    break
-
-        if kyou == 0:
-            #print ('相性は悪いです')
-            kantei_kisyu_tuki.append(3) #悪い相性    
-
-        #print ('今年の九星との相性は')
-        #今日の九星との相性を判断して表示
-        #今日相性が良いのかチャック用
-        kyou = 0
-
-        if inp2_kusei >0:
-            inp_kusei = inp2_kusei
-
-        for i in range(3):
-            if list1[kusei_nen][i] == inp_kusei:
-                #print ('一番良い相性です')
-                kantei_kisyu_hi.append(1) #一番良い相性
-                kyou = 1
-                break
-
-        if kyou == 0: 
-            for i in range(4):
-                if list2[kusei_nen][i] == inp_kusei:
-                    #print ('良い相性です')
-                    kantei_kisyu_hi.append(2) #良い相性
-                    kyou = 1
-                    break
-
-        if kyou == 0:
-            #print ('相性は悪いです')
-            kantei_kisyu_hi.append(3) #悪い相性
-
-        
-
-    #l は、入力された件数
-    
-    #鑑定結果と知らせる通知
-
-    #馬の九星との相性を表示の準備
-    #配列変数にデータセット
-
-
-    #kantei_kisyu_total 騎手の結果を格納する配列
-    #騎手名,画数,九星,今年の相性,今月の相性,今日の相性
-    kantei_kisyu_total = []* kisyu_l
-
-
-
-    #騎手の数,0,0,年,月,日
-    kantei_kisyu_total.append([kisyu_l,0,0,kusei_nen,kusei_tuki,kusei_hi])
-
-    for i in range(kisyu_l) :
-        kantei_kisyu_total.append([kisyu[i],kakusu_kisyu[i],kantei_kisyu_kusei[i],kantei_kisyu_nen[i],kantei_kisyu_tuki[i],kantei_kisyu_hi[i]])
-
-
-    return kantei_kisyu_total
-
-
-#########################
-#
-#馬の鑑定
-#
-##########################
-def kantei_uma(uma,kusei_nen,kusei_tuki,kusei_hi):
-
-    kantei_int()
-
-    uma_l = len(uma)
-    #馬名
-    l = 0
-    kusei_nen = int(kusei_nen)
-    kusei_tuki = int(kusei_tuki)
-    kusei_hi = int(kusei_hi)
-  
-    temp_uma = []
-    for i in  range(uma_l):
-        if uma[i] !="" :
-            temp_uma.append(uma[i])
-        else:
-            break
-
-    uma = temp_uma
-    uma_l = len(uma) 
-
-    for l in range(uma_l): #馬名が入力されている間ループ
-        inp2_kusei = 0
-        inp_kusei = 0
-        #馬の名前の文字数を取得
-        length = len(uma[l])
-        #カタカナとー以外かチェック
-
-        for i in range(length):
-            if uma[l][i] == "ー":
-                continue
-            if uma[l][i] < "ァ" or uma[l][i] > "ヶ":
-                errer_meg.append("errer")
-                errer_meg.append("馬名にカタカナ以外が入力されています。")
-                errer_meg.append(uma[l])
-                return errer_meg
-
-        temp_uma = uma[l]
-
-        #一文字ずつ取り出して、画数を取得
-        for i in range(length):
-            for j in range(len(kana)):  
-                if  temp_uma[i] == kana[j]:
-                    inp_kusei = inp_kusei + int(kakusu[j])
-                    break
-                    
-
-        #馬名の画数の計算ができないとき
-        if inp_kusei == 0:
-            errer_meg.append("errer")
-            errer_meg.append("馬名の画数が取得できませんでした。")
-            errer_meg.append(uma[l])
-            return errer_meg
-
-        #画数保存
-        kakusu_uma.append(inp_kusei)
-
-        
-
-        if inp_kusei > 9:
-            inp2_kusei = 0
-            for i in str(inp_kusei):
-                # 桁ごとに足していく
-                inp2_kusei += int(i)
-
-        while inp2_kusei > 9:
-            new_inp2_kusei = 0
-            for i in str(inp2_kusei):
-                # 桁ごとに足していく
-                new_inp2_kusei += int(i)
-            inp2_kusei = new_inp2_kusei
-
-        
-
-        #二桁の場合の合計表示
-        #print ('二桁の場合の合計＝' + str(inp2_kusei))
-        #九星の位置を取得
-        if inp2_kusei >0:
-            kantei_uma_kusei.append(inp2_kusei)
-            inp_kusei = inp2_kusei
-        else:
-            kantei_uma_kusei.append(inp_kusei)
-
-
-      
-        #print ('今日の九星との相性は')
-        #今年の九星との相性を判断して表示
-        #今年相性が良いのかチャック用
-        kyou = 0
-        for i in range(3):
-            if list1[kusei_nen][i] == inp_kusei:
-                #print ('一番良い相性です')
-                kantei_uma_nen.append(1) #一番良い相性
-                kyou = 1
-                break
-
-        if kyou == 0:    
-            for i in range(4):
-                if list2[kusei_nen][i] == inp_kusei:
-                    #print ('良い相性です')
-                    kantei_uma_nen.append(2) #良い相性
-                    kyou = 1
-                    break
-
-        if kyou == 0:
-            #print ('相性は悪いです')
-            kantei_uma_nen.append(3) #悪い相性
-
-        #print ('今月の九星との相性は')
-        #今月の九星との相性を判断して表示
-        #今月相性が良いのかチャック用
-        kyou = 0
-
-
-        for i in range(3):
-            if list1[kusei_tuki][i] == inp_kusei:
-                #print ('一番良い相性です')
-                kantei_uma_tuki.append(1) #一番良い相性
-                kyou = 1
-                break
-
-        if kyou == 0: 
-            for i in range(4):
-                if list2[kusei_tuki][i] == inp_kusei:
-                    #print ('良い相性です')
-                    kantei_uma_tuki.append(2) #良い相性
-                    kyou = 1
-                    break
-
-        if kyou == 0:
-            #print ('相性は悪いです')
-            kantei_uma_tuki.append(3) #悪い相性     
-
-        #print ('今年の九星との相性は')
-        #今日の九星との相性を判断して表示
-        #今日の相性が良いのかチャック用
-        kyou = 0
-
-        for i in range(3):
-            if list1[kusei_hi][i] == inp_kusei:
-                #print ('一番良い相性です')
-                kantei_uma_hi.append(1) #一番良い相性
-                kyou = 1
-                break
-
-        if kyou == 0: 
-            for i in range(4):
-                if list2[kusei_hi][i] == inp_kusei:
-                    #print ('良い相性です')
-                    kantei_uma_hi.append(2) #良い相性
-                    kyou = 1
-                    break
-
-        if kyou == 0:
-            #print ('相性は悪いです')
-            kantei_uma_hi.append(3) #悪い相性
-
- 
-    #l は、入力された件数
-    
-    #鑑定結果と知らせる通知
-
-    #馬の九星との相性を表示の準備
-    #配列変数にデータセット
-
-    #kantei_uma_total 馬名の結果を格納する配列
-    #馬名,画数,九星,今年の相性,今月の相性,今日の相性
-    kantei_uma_total = []* uma_l
-
-
-    #馬の数,0,0,年,月,日
-    kantei_uma_total.append([uma_l,0,0,kusei_nen,kusei_tuki,kusei_hi])
-
-    for i in range(uma_l) :
-        kantei_uma_total.append([uma[i],kakusu_uma[i],kantei_uma_kusei[i],kantei_uma_nen[i],kantei_uma_tuki[i],kantei_uma_hi[i]])
-    
-
-
-
-    return kantei_uma_total
-
-
-if __name__ == '__main__':
-    print('馬鑑定結果')
-
-
-
-
+            total += count
+    if unknown:
+        label = "馬名" if kind == "uma" else "騎手名"
+        raise InputError(f"{label}に画数未登録または非対応の文字があります: {'・'.join(unknown)}", name)
+    return total
+
+
+def reduce_strokes(total):
+    """従来どおり桁を加算して1〜9にする。"""
+    if isinstance(total, bool) or not isinstance(total, int) or total < 1:
+        raise ValueError("画数は正の整数で指定してください。")
+    while total > 9:
+        total = sum(int(digit) for digit in str(total))
+    return total
+
+
+def compatibility(number, star):
+    """既存の判定コード: 1=最上位、2=良い、3=該当しない。"""
+    if number in list1[star]:
+        return 1
+    if number in list2[star]:
+        return 2
+    return 3
+
+
+def _kantei(names, kusei_nen, kusei_tuki, kusei_hi, kind):
+    try:
+        stars = validate_kusei(kusei_nen, kusei_tuki, kusei_hi)
+        prepared = _prepare_names(names)
+        kana, kanji = kantei_int()
+        result = [[len(prepared), 0, 0, *stars]]
+        for name in prepared:
+            total = _count_strokes(name, kind, kana, kanji)
+            number = reduce_strokes(total)
+            # 年/月/日はそれぞれ対応する星で評価する。前回の配列は参照しない。
+            result.append([name, total, number, *[compatibility(number, star) for star in stars]])
+        return result
+    except InputError as exc:
+        # 綴りも含め、既存のapp.py・errer.htmlとの互換性を維持。
+        return ["errer", str(exc), exc.value]
+    except (OSError, UnicodeError, csv.Error, ValueError):
+        LOGGER.exception("画数辞書の読み込み・検証に失敗しました")
+        return ["errer", "画数辞書を読み込めません。管理者に確認してください。", ""]
+
+
+def kantei_uma(uma, kusei_nen, kusei_tuki, kusei_hi):
+    return _kantei(uma, kusei_nen, kusei_tuki, kusei_hi, "uma")
+
+
+def kantei_kisyu(kisyu, kusei_nen, kusei_tuki, kusei_hi):
+    return _kantei(kisyu, kusei_nen, kusei_tuki, kusei_hi, "kisyu")
+
+
+if __name__ == "__main__":
+    print("馬鑑定結果")
